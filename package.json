@@ -1,6 +1,6 @@
 {
   "name": "automatedsftpsender",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Automated SFTP Sender (File Watch)",
   "main": "index.js",
   "scripts": {
@@ -16,5 +16,10 @@
   "devDependencies": {
     "@types/chokidar": "^1.7.5",
     "@types/ssh2-sftp-client": "^2.3.1"
-  }
+  },
+  "keywords": [
+    "nodejs",
+    "javascript",
+    "sftp"
+  ]
 }
