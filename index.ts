@@ -21,6 +21,8 @@ export default class AutomatedSFTPSender {
         this.sftp.connect(this.connectConfig).then(() => {
             this.ready = true
             console.log('connected')
+        }).catch((error) => {
+            console.error(error)
         })
     }
 
