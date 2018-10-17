@@ -53,7 +53,7 @@ Filters whether your changed files will be sent to server or not. `(true: send, 
 ## Examples
 
 ```javascript
-import AutomatedSFTPSender from 'AutomatedSFTPSender'
+import AutomatedSFTPSender from 'automatedsftpsender'
 import path from 'path'
 
 const sender = new AutomatedSFTPSender({
