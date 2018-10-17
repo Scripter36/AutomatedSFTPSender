@@ -1,6 +1,6 @@
 {
   "name": "automatedsftpsender",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Automated SFTP Sender (File Watch)",
   "main": "index.js",
   "scripts": {
