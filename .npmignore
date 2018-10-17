@@ -1,0 +1,4 @@
+.DS_Store
+.git*
+tsconfig.json
+tslint.json
