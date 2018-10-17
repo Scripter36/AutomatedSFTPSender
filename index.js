@@ -13,6 +13,7 @@ class AutomatedSFTPSender {
         this.connectConfig = connectConfig;
         this.remotePath = remotePath;
         this.sftp = new ssh2_sftp_client_1.default();
+        this.filter = () => true;
     }
     connect() {
         this.sftp.connect(this.connectConfig).then(() => {
@@ -22,61 +23,79 @@ class AutomatedSFTPSender {
     }
     watch(watchPath, options) {
         const watcher = chokidar_1.default.watch(watchPath, options);
-        watcher.on('add', filePath => this.upload(filePath, path_1.default.relative(watchPath, filePath)));
-        watcher.on('change', filePath => this.upload(filePath, path_1.default.relative(watchPath, filePath)));
-        watcher.on('unlink', filePath => this.delete(path_1.default.relative(watchPath, filePath)));
-        watcher.on('addDir', filePath => this.mkdir(path_1.default.relative(watchPath, filePath)));
-        watcher.on('unlinkDir', filePath => this.rmdir(path_1.default.relative(watchPath, filePath)));
+        watcher.on('add', filePath => {
+            if (this.filter(filePath, 'add'))
+                this.upload(filePath, path_1.default.relative(watchPath, filePath));
+        });
+        watcher.on('change', filePath => {
+            if (this.filter(filePath, 'change'))
+                this.upload(filePath, path_1.default.relative(watchPath, filePath));
+        });
+        watcher.on('unlink', filePath => {
+            if (this.filter(filePath, 'unlink'))
+                this.delete(path_1.default.relative(watchPath, filePath));
+        });
+        watcher.on('addDir', filePath => {
+            if (this.filter(filePath, 'addDir'))
+                this.mkdir(path_1.default.relative(watchPath, filePath));
+        });
+        watcher.on('unlinkDir', filePath => {
+            if (this.filter(filePath, 'unlinkDir'))
+                this.rmdir(path_1.default.relative(watchPath, filePath));
+        });
         watcher.on('error', error => console.log(`Watcher error: ${error}`));
         watcher.on('ready', () => console.log('Initial scan complete. Ready for changes'));
     }
-    upload(absolutePath, relativePath) {
+    upload(clientPath, serverPath) {
         if (!this.ready)
             return;
-        const remotePath = path_1.default.resolve(this.remotePath, relativePath);
+        const remotePath = path_1.default.resolve(this.remotePath, serverPath);
         setTimeout(() => {
-            this.sftp.fastPut(absolutePath, remotePath).then(() => {
-                console.log(`sent ${absolutePath} to ${remotePath}`);
-            }).catch(() => {
-                // Do Nothing
+            this.sftp.fastPut(clientPath, remotePath).then(() => {
+                console.log(`sent ${clientPath} to ${remotePath}`);
+            }).catch((error) => {
+                console.error(error);
             });
         }, 100);
     }
-    delete(relativePath) {
+    delete(serverPath) {
         if (!this.ready)
             return;
-        const remotePath = path_1.default.resolve(this.remotePath, relativePath);
+        const remotePath = path_1.default.resolve(this.remotePath, serverPath);
         setTimeout(() => {
             this.sftp.delete(remotePath).then(() => {
                 console.log(`deleted ${remotePath}`);
-            }).catch(() => {
-                // Do Nothing
+            }).catch((error) => {
+                console.error(error);
             });
         }, 100);
     }
-    mkdir(relativePath) {
+    mkdir(serverPath) {
         if (!this.ready)
             return;
-        const remotePath = path_1.default.resolve(this.remotePath, relativePath);
+        const remotePath = path_1.default.resolve(this.remotePath, serverPath);
         setTimeout(() => {
             this.sftp.mkdir(remotePath).then(() => {
                 console.log(`Created folder ${remotePath}`);
-            }).catch(() => {
-                // Do Nothing
+            }).catch((error) => {
+                console.error(error);
             });
         }, 100);
     }
-    rmdir(relativePath) {
+    rmdir(serverPath) {
         if (!this.ready)
             return;
-        const remotePath = path_1.default.resolve(this.remotePath, relativePath);
+        const remotePath = path_1.default.resolve(this.remotePath, serverPath);
         setTimeout(() => {
             this.sftp.rmdir(remotePath, true).then(() => {
                 console.log(`Removed folder ${remotePath}`);
-            }).catch(() => {
-                // Do Nothing
+            }).catch((error) => {
+                console.error(error);
             });
         }, 100);
     }
+    setFilter(filter) {
+        this.filter = filter;
+    }
 }
-exports.AutomatedSFTPSender = AutomatedSFTPSender;
+exports.default = AutomatedSFTPSender;
