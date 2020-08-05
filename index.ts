@@ -49,7 +49,7 @@ export default class AutomatedSFTPSender {
 
     upload (clientPath: string, serverPath: string) {
         if (!this.ready) return
-        const remotePath = path.resolve(this.remotePath, serverPath)
+        const remotePath = path.join(this.remotePath, serverPath).replace(/\\/g, '/')
         setTimeout(() => {
             this.sftp.fastPut(clientPath, remotePath).then(() => {
                 console.log(`sent ${clientPath} to ${remotePath}`)
@@ -61,7 +61,7 @@ export default class AutomatedSFTPSender {
 
     delete (serverPath: string) {
         if (!this.ready) return
-        const remotePath = path.resolve(this.remotePath, serverPath)
+        const remotePath = path.join(this.remotePath, serverPath).replace(/\\/g, '/')
         setTimeout(() => {
             this.sftp.delete(remotePath).then(() => {
                 console.log(`deleted ${remotePath}`)
@@ -73,7 +73,7 @@ export default class AutomatedSFTPSender {
 
     mkdir (serverPath: string) {
         if (!this.ready) return
-        const remotePath = path.resolve(this.remotePath, serverPath)
+        const remotePath = path.join(this.remotePath, serverPath).replace(/\\/g, '/')
         setTimeout(() => {
             this.sftp.mkdir(remotePath).then(() => {
                 console.log(`Created folder ${remotePath}`)
@@ -85,7 +85,7 @@ export default class AutomatedSFTPSender {
 
     rmdir (serverPath: string) {
         if (!this.ready) return
-        const remotePath = path.resolve(this.remotePath, serverPath)
+        const remotePath = path.join(this.remotePath, serverPath).replace(/\\/g, '/')
         setTimeout(() => {
             this.sftp.rmdir(remotePath, true).then(() => {
                 console.log(`Removed folder ${remotePath}`)

@@ -19,6 +19,8 @@ class AutomatedSFTPSender {
         this.sftp.connect(this.connectConfig).then(() => {
             this.ready = true;
             console.log('connected');
+        }).catch((error) => {
+            console.error(error);
         });
     }
     watch(watchPath, options) {
@@ -49,7 +51,7 @@ class AutomatedSFTPSender {
     upload(clientPath, serverPath) {
         if (!this.ready)
             return;
-        const remotePath = path_1.default.resolve(this.remotePath, serverPath);
+        const remotePath = path_1.default.join(this.remotePath, serverPath).replace('\\', '/');
         setTimeout(() => {
             this.sftp.fastPut(clientPath, remotePath).then(() => {
                 console.log(`sent ${clientPath} to ${remotePath}`);
@@ -61,7 +63,7 @@ class AutomatedSFTPSender {
     delete(serverPath) {
         if (!this.ready)
             return;
-        const remotePath = path_1.default.resolve(this.remotePath, serverPath);
+        const remotePath = path_1.default.join(this.remotePath, serverPath).replace('\\', '/');
         setTimeout(() => {
             this.sftp.delete(remotePath).then(() => {
                 console.log(`deleted ${remotePath}`);
@@ -73,7 +75,7 @@ class AutomatedSFTPSender {
     mkdir(serverPath) {
         if (!this.ready)
             return;
-        const remotePath = path_1.default.resolve(this.remotePath, serverPath);
+        const remotePath = path_1.default.join(this.remotePath, serverPath).replace('\\', '/');
         setTimeout(() => {
             this.sftp.mkdir(remotePath).then(() => {
                 console.log(`Created folder ${remotePath}`);
@@ -85,7 +87,7 @@ class AutomatedSFTPSender {
     rmdir(serverPath) {
         if (!this.ready)
             return;
-        const remotePath = path_1.default.resolve(this.remotePath, serverPath);
+        const remotePath = path_1.default.join(this.remotePath, serverPath).replace('\\', '/');
         setTimeout(() => {
             this.sftp.rmdir(remotePath, true).then(() => {
                 console.log(`Removed folder ${remotePath}`);
